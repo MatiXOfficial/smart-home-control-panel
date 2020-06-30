@@ -1,2 +1,2 @@
-# smart-home-control-panel
-Aplikacja pilota do sterowania oświetleniem inteligentnego domu
+# Smart Home Control Panel
+Aplikacja pilota do sterowania oświetleniem inteligentnego domu stworzona w ramach kursu Programowanie w Języku Python.
