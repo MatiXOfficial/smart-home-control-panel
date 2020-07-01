@@ -6,5 +6,8 @@
     "kuchnia" : [
         "lampa duża",
         "lampa mała"
+    ],
+    "sypialnia" : [
+        "lampka nocna"
     ]
 }
