@@ -13,11 +13,6 @@ class MainFrame:
         # self.root.resizable(0, 0)
         self.root.title('Pilot')
 
-        # Style przycisków
-        style = ttk.Style()
-        style.configure('On.TButton', foreground='#007aff', background='#007aff')
-        style.configure('Off.TButton')
-
         # Słownik przycisków
         self.buttons = {}
         
@@ -45,10 +40,11 @@ class MainFrame:
             for i, lamp in enumerate(lamps):
                 label_lamp = ttk.Label(tab, text=lamp, font=('default', 15))
 
-                self.buttons[room][lamp] = ttk.Button(tab, text='Off', command=lambda x=room, y=lamp: self._button_command(x, y), style='Off.TButton')
+                self.buttons[room][lamp] = tk.Button(tab, text='Off', command=lambda x=room, y=lamp: self._button_command(x, y),
+                                                     bd=1, relief=tk.GROOVE, width=6, fg='white', bg='#bcbcbc')
 
                 label_lamp.grid(row=i+1, column=0, padx=10, pady=5)
-                self.buttons[room][lamp].grid(row=i+1, column=1, padx=10)
+                self.buttons[room][lamp].grid(row=i+1, column=1, padx=2)
 
             tab_control.add(tab, text=room)
 
@@ -59,12 +55,10 @@ class MainFrame:
         Funkcja obsługująca przyciski
         '''
         if self.buttons[room][lamp]['text'] == 'Off':
-            self.buttons[room][lamp]['text'] = 'On'
-            self.buttons[room][lamp]['style'] = 'On.TButton'
+            self.buttons[room][lamp].config(text='On', fg='white', bg='#007aff')
             self.label_info['text'] = f'Włączono {room}: {lamp}'
         else:
-            self.buttons[room][lamp]['text'] = 'Off'
-            self.buttons[room][lamp]['style'] = 'Off.TButton'
+            self.buttons[room][lamp].config(text='Off', fg='white', bg='#bcbcbc')
             self.label_info['text'] = f'Wyłączono {room}: {lamp}'
 
     def _info_frame(self):
