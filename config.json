@@ -1,13 +1,18 @@
 {
-    "salon" : [
-        "lampa 1",
-        "lampa 2"
-    ],
-    "kuchnia" : [
-        "lampa duża",
-        "lampa mała"
-    ],
-    "sypialnia" : [
-        "lampka nocna"
-    ]
+    "adres" : "192.168.117.1",
+    "nazwa" : "pilot1",
+
+    "urządzenia" : {
+        "salon" : [
+            "lampa 1",
+            "lampa 2"
+        ],
+        "kuchnia" : [
+            "lampa duża",
+            "lampa mała"
+        ],
+        "sypialnia" : [
+            "lampka nocna"
+        ]
+    }
 }

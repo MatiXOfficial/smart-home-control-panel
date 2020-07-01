@@ -7,29 +7,35 @@ class MainFrame:
     '''
     Główne okno z pilotem sterującym inteligentym domem.
     '''
-    def __init__(self, config):
+    def __init__(self, config, client):
 
         self.root = tk.Tk()
-        # self.root.resizable(0, 0)
         self.root.title('Pilot')
+
+        self.client = client
 
         # Słownik przycisków
         self.buttons = {}
         
-        self.load_config(config)
+        self.config = config
+        self.load_config()
         self._info_frame()
     
+        self.root.update()
+        self.root.minsize(self.root.winfo_width(), self.root.winfo_height())
         self.root.mainloop()
 
-    def load_config(self, config):
+    def load_config(self):
         '''
-        Funkcja ładująca config, tworzy zakładki i przyciski.
+        Funkcja ładująca konfigurację, tworzy zakładki i przyciski.
         '''
         # Tworzenie i wypełnianie zakładek
         tab_control = ttk.Notebook()
 
-        for room, lamps in config.items():
+        for room, lamps in self.config['urządzenia'].items():
             tab = ttk.Frame(tab_control)
+            tk.Grid.columnconfigure(tab, 0, weight=1)
+            tk.Grid.columnconfigure(tab, 1, weight=1)
             self.buttons[room] = {}
 
             # Wypisanie nazwy pokoju
@@ -43,12 +49,12 @@ class MainFrame:
                 self.buttons[room][lamp] = tk.Button(tab, text='Off', command=lambda x=room, y=lamp: self._button_command(x, y),
                                                      bd=1, relief=tk.GROOVE, width=6, fg='white', bg='#bcbcbc')
 
-                label_lamp.grid(row=i+1, column=0, padx=10, pady=5)
-                self.buttons[room][lamp].grid(row=i+1, column=1, padx=2)
+                label_lamp.grid(row=i+1, column=0, padx=10, pady=5, sticky='e')
+                self.buttons[room][lamp].grid(row=i+1, column=1, padx=2, sticky='w')
 
             tab_control.add(tab, text=room)
 
-        tab_control.pack(expand=True, fill='both')
+        tab_control.pack(expand=True, fill='both', side='top')
 
     def _button_command(self, room, lamp):
         '''
@@ -67,10 +73,10 @@ class MainFrame:
         '''
         frame = ttk.Frame(self.root)
 
-        self.label_info = ttk.Label(frame)
-        # button_options = ttk.Button(frame, text='Ustawienia')
+        self.label_info = ttk.Label(frame, text=f'Połączono z {self.config["adres"]} jako {self.config["nazwa"]}')
+        button_options = ttk.Button(frame, text='Ustawienia')
 
         self.label_info.pack(side='left')
-        # button_options.pack(side='right')
+        button_options.pack(side='right')
 
-        frame.pack(fill='both')
+        frame.pack(fill='both', side='bottom')

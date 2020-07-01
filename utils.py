@@ -7,6 +7,7 @@ def show_error(error_message):
     root = tk.Tk()
     root.withdraw()
     tk.messagebox.showerror('Błąd', error_message)
+    exit()
 
 
 def dict_raise_duplicates(pairs):
