@@ -18,18 +18,23 @@ except ValueError as err:
     show_error(f'Błąd w pliku konfiguracyjnym config.json.\nKlucz {err} powtórzył się.')
 
 # Połączenie z serwerem mqtt
+if 'nazwa' not in config:
+    config['nazwa'] = input('Podaj nazwę: ')
+
+client = mqtt.Client(config['nazwa'])
+
+if 'adres' not in config:
+    config['adres'] = input('Podaj adres serwera: ')
+
 try:
-    client = mqtt.Client(config['nazwa'])
     client.connect(config['adres'])
-except KeyError as err:
-    show_error(f'Błąd w pliku konfiguracyjnym config.json.\nBrak pola {err}.')
 except ConnectionRefusedError:
     show_error('Nie można nawiązać połączenia z serwerem MQTT.')
 
 client.loop_start()
 
 # Główne okno pilota
-MainFrame(config, client)
+main_frame = MainFrame(config, client)
 
 client.loop_stop()
 client.disconnect()
