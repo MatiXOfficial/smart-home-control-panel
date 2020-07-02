@@ -1,9 +1,9 @@
 import json
 from tkinter import messagebox
 
-from main_frame import MainFrame
 from utils import show_error, dict_raise_duplicates
 from client import Client
+from gui.input_frame import InputFrame
 
 import paho.mqtt.client as mqtt
 
@@ -19,10 +19,10 @@ except ValueError as err:
     show_error(f'Błąd w pliku konfiguracyjnym config.json.\nKlucz {err} powtórzył się.')
 
 if 'nazwa' not in config:
-    config['nazwa'] = input('Podaj nazwę: ')
+    config['nazwa'] = InputFrame('Podaj nazwę').start_and_return()
 
 if 'adres' not in config:
-    config['adres'] = input('Podaj adres serwera: ')
+    config['adres'] = InputFrame('Podaj adres serwera').start_and_return()
 
 # Serwer MQTT
 Client(config)

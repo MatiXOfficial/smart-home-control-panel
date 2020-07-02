@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 
 from utils import show_error
-from main_frame import MainFrame
+from gui.main_frame import MainFrame
 
 class Client:
 
