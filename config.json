@@ -1,5 +1,6 @@
 {
     "adres" : "192.168.117.1",
+    "nazwa" : "pilot",
 
     "urządzenia" : {
         "salon" : {

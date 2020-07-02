@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 import json
 
-from time import sleep
-
 class MainFrame:
     '''
     Główne okno z pilotem sterującym inteligentym domem.
@@ -15,22 +13,19 @@ class MainFrame:
         self.root.iconbitmap('images/icon.ico')
 
         self.client = client
-        self.client.on_message = self._on_message
 
         # Słownik przycisków
         self.buttons = {}
         
         self.config = config
-        self.load_config()
         self._info_frame()
-
-        # Subskrybcja określonych tematów
-        for room, lamps in config['urządzenia'].items():
-            for lamp in lamps.keys():
-                client.subscribe(f"{room}/{lamp}")
+        self.load_config()
     
         self.root.update()
         self.root.minsize(self.root.winfo_width(), self.root.winfo_height())
+
+    # Rozpoczyna pętlę - wizualizacja okienka
+    def start_loop(self):
         self.root.mainloop()
 
     # Funkcja ładująca konfigurację, tworzy zakładki i przyciski.
@@ -51,9 +46,17 @@ class MainFrame:
             # Wypisanie nazw lamp, stworzenie przycisków
             for i, lamp in enumerate(lamps.keys()):
                 label_lamp = ttk.Label(tab, text=lamp, font=('default', 15))
+                if 'state' in self.config['urządzenia'][room][lamp]:
+                    state = self.config['urządzenia'][room][lamp]['state']
+                else:
+                    state = 'Off'
 
-                self.buttons[room][lamp] = tk.Button(tab, text='Off', command=lambda x=room, y=lamp: self._button_command(x, y),
-                                                     bd=1, relief=tk.GROOVE, width=6, fg='white', bg='#bcbcbc')
+                self.buttons[room][lamp] = tk.Button(tab, command=lambda x=room, y=lamp: self._button_command(x, y),
+                                                     bd=1, relief=tk.GROOVE, width=6)
+                if state == 'Off':
+                    self.buttons[room][lamp].config(text='Off', fg='white', bg='#bcbcbc')
+                else:
+                    self.buttons[room][lamp].config(text='On', fg='white', bg='#007aff')
 
                 label_lamp.grid(row=i+1, column=0, padx=10, pady=5, sticky='e')
                 self.buttons[room][lamp].grid(row=i+1, column=1, padx=2, sticky='w')
@@ -69,6 +72,15 @@ class MainFrame:
         else:
             self.client.publish(f'{room}/{lamp}', 'Off', retain=True)
 
+    # Funkcja zmieniająca stan przycisków
+    def change_button_state(self, room, device, state):
+        if state == 'Off':
+            self.buttons[room][device].config(text='Off', fg='white', bg='#bcbcbc')
+            self.label_info['text'] = f'Wyłączono {room}: {device}'
+        else:
+            self.buttons[room][device].config(text='On', fg='white', bg='#007aff')
+            self.label_info['text'] = f'Włączono {room}: {device}'
+
     # Funkcja tworzy ramkę do wyświetlania informacji.
     def _info_frame(self):
         frame = ttk.Frame(self.root)
@@ -80,17 +92,3 @@ class MainFrame:
         button_options.pack(side='right')
 
         frame.pack(fill='both', side='bottom')
-
-    # Callout wykonujący się po otrzymaniu wiadomości z serwera
-    def _on_message(self, client, userdata, message):
-        room, device = message.topic.split('/')
-        self._change_button_state(room, device, str(message.payload.decode("utf-8")))
-
-    # Funkcja zmieniająca stan przycisków
-    def _change_button_state(self, room, device, state):
-        if state == 'Off':
-            self.buttons[room][device].config(text='Off', fg='white', bg='#bcbcbc')
-            self.label_info['text'] = f'Wyłączono {room}: {device}'
-        else:
-            self.buttons[room][device].config(text='On', fg='white', bg='#007aff')
-            self.label_info['text'] = f'Włączono {room}: {device}'
