@@ -11,6 +11,7 @@ class MainFrame:
 
         self.root = tk.Tk()
         self.root.title('Pilot')
+        self.root.iconbitmap('images/icon.ico')
 
         self.client = client
 
@@ -73,7 +74,7 @@ class MainFrame:
         '''
         frame = ttk.Frame(self.root)
 
-        self.label_info = ttk.Label(frame, text=f'Połączono z {self.config["adres"]} jako {self.config["nazwa"]}')
+        self.label_info = ttk.Label(frame, text=f'Połączono z {self.config["adres"]} jako {self.config["nazwa"]}.')
         button_options = ttk.Button(frame, text='Ustawienia')
 
         self.label_info.pack(side='left')

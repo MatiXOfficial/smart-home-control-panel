@@ -20,12 +20,11 @@ except ValueError as err:
 # Połączenie z serwerem mqtt
 try:
     client = mqtt.Client(config['nazwa'])
-    # client.on_connect = on_connect
     client.connect(config['adres'])
 except KeyError as err:
     show_error(f'Błąd w pliku konfiguracyjnym config.json.\nBrak pola {err}.')
 except ConnectionRefusedError:
-    show_error('Nie można nawiązać połączenia z serwerem mqtt')
+    show_error('Nie można nawiązać połączenia z serwerem MQTT.')
 
 client.loop_start()
 
