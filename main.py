@@ -1,9 +1,8 @@
 import json
 from tkinter import messagebox
 
-from utils import show_error, dict_raise_duplicates
+from utils import show_error, dict_raise_duplicates, test_config
 from client import Client
-from gui.input_frame import InputFrame
 
 import paho.mqtt.client as mqtt
 
@@ -13,16 +12,17 @@ try:
         config = json.load(file, object_pairs_hook=dict_raise_duplicates)
 except FileNotFoundError:
     show_error('Nie znaleziono pliku konfiguracyjnego config.json.')
-except json.decoder.JSONDecodeError:
-    show_error('Błąd w pliku konfiguracyjnym config.json.')
+except json.decoder.JSONDecodeError as err:
+    show_error(f'Nie można odkodować pliku konfiguracyjnego config.json.\n{err}')
 except ValueError as err:
     show_error(f'Błąd w pliku konfiguracyjnym config.json.\nKlucz {err} powtórzył się.')
 
-if 'nazwa' not in config:
-    config['nazwa'] = InputFrame('Podaj nazwę').start_and_return()
-
-if 'adres' not in config:
-    config['adres'] = InputFrame('Podaj adres serwera').start_and_return()
+try:
+    test_config(config)
+except KeyError as err:
+    show_error(f'Błąd w pliku konfiguracyjnym config.json.\n{err}')
+except ValueError as err:
+    show_error(f'Błąd w pliku konfiguracyjnym config.json.\n{err}')
 
 # Serwer MQTT
 Client(config)

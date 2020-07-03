@@ -17,9 +17,9 @@ class Client:
         self.client.loop_start()
 
         # Subskrybcja określonych tematów
-        for room, lamps in config['urządzenia'].items():
-            for lamp in lamps.keys():
-                self.client.subscribe(f"{room}/{lamp}")
+        for room, devices in config['urządzenia'].items():
+            for device in devices.keys():
+                self.client.subscribe(self.config['urządzenia'][room][device]['temat'])
 
         self.client.on_message = self._on_message_start
 
@@ -37,6 +37,10 @@ class Client:
         '''
         room, device = message.topic.split('/')
         state = (message.payload.decode("utf-8"))
+        if room in self.config['topics'] and device in self.config['topics'][room]:
+            old_room = room
+            room = self.config['topics'][old_room][device]['room']
+            device = self.config['topics'][old_room][device]['device']
         if room in self.config['urządzenia']:
             if device in self.config['urządzenia'][room]:
                 self.config['urządzenia'][room][device]['state'] = state

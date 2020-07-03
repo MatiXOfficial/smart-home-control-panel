@@ -1,17 +1,35 @@
 {
     "adres" : "192.168.117.1",
+    "nazwa" : "Mateusz",
 
     "urządzenia" : {
+        "przedpokój" : {
+            "lampka" : {
+                "temat" : "salon/lampka"
+            }
+        },
         "salon" : {
-            "lampa 1" : {},
-            "lampa 2" : {}
+            "lampa główna" : {
+                "typ" : "przełącznik"
+            },
+            "lampa mała" : {}
         },
         "kuchnia" : {
             "lampa duża" : {},
-            "lampa mała" : {}
+            "oświetlenie kuchni" : {
+                "max" : 6,
+                "typ" : "suwak"
+            }
         },
         "sypialnia" : {
-            "lampka nocna" : {}
+            "lampka nocna" : {}   
+        },
+        "biuro" : {
+            "podświetlenie led" : {
+                "typ" : "suwak",
+                "min" : 2,
+                "max" : 10
+            }
         }
     }
 }

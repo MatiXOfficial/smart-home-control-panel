@@ -21,7 +21,7 @@ class MainFrame:
         self.load_config()
     
         self.root.update()
-        self.root.minsize(self.root.winfo_width(), self.root.winfo_height())
+        self.root.minsize(self.root.winfo_width() + 20, self.root.winfo_height())
 
     # Rozpoczyna pętlę - wizualizacja okienka
     def start_loop(self):
@@ -65,14 +65,19 @@ class MainFrame:
         tab_control.pack(expand=True, fill='both', side='top')
 
     # Funkcja obsługująca przyciski
-    def _button_command(self, room, lamp):
-        if self.buttons[room][lamp]['text'] == 'Off':
-            self.client.publish(f'{room}/{lamp}', 'On', retain=True)
+    def _button_command(self, room, device):
+        if self.buttons[room][device]['text'] == 'Off':
+            self.client.publish(self.config['urządzenia'][room][device]['temat'], 'On', retain=True)
         else:
-            self.client.publish(f'{room}/{lamp}', 'Off', retain=True)
+            self.client.publish(self.config['urządzenia'][room][device]['temat'], 'Off', retain=True)
 
     # Funkcja zmieniająca stan przycisków
     def change_button_state(self, room, device, state):
+        if room in self.config['topics'] and device in self.config['topics'][room]:
+            old_room = room
+            room = self.config['topics'][old_room][device]['room']
+            device = self.config['topics'][old_room][device]['device']
+
         if state == 'Off':
             self.buttons[room][device].config(text='Off', fg='white', bg='#bcbcbc')
             self.label_info['text'] = f'Wyłączono {room}: {device}'
