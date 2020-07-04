@@ -1,32 +1,36 @@
 import paho.mqtt.client as mqtt
 
-from utils import show_error
+from gui.utils import show_error
 from gui.main_frame import MainFrame
 
 class Client:
 
     def __init__(self, config):
         self.config = config
-        self.client = mqtt.Client(self.config['nazwa'])
+        self.client = mqtt.Client(self.config.name)
 
+        # Próba połączenia
         try:
-            self.client.connect(self.config['adres'])
+            self.client.connect(self.config.address)
         except:
             show_error('Nie można nawiązać połączenia z serwerem MQTT.')
 
         self.client.loop_start()
 
         # Subskrybcja określonych tematów
-        for room, devices in config['urządzenia'].items():
+        for room, devices in self.config.rooms.items():
             for device in devices.keys():
-                self.client.subscribe(self.config['urządzenia'][room][device]['temat'])
+                self.client.subscribe(self.config.device(room, device)['temat'])
 
+        # Obsłużenie zatrzymanych wiadomości (retained)
         self.client.on_message = self._on_message_start
 
+        # Uruchomienie okna i zmiana obsługi wiadomości na tryb związany z gui
         self.main_frame = MainFrame(self.config, self.client)
         self.client.on_message = self._on_message_normal
         self.main_frame.start_loop()
 
+        # Zakończenie działania po wyłączeniu okna
         self.client.loop_stop()
         self.client.disconnect()
 
@@ -37,13 +41,8 @@ class Client:
         '''
         room, device = message.topic.split('/')
         state = (message.payload.decode("utf-8"))
-        if room in self.config['topics'] and device in self.config['topics'][room]:
-            old_room = room
-            room = self.config['topics'][old_room][device]['room']
-            device = self.config['topics'][old_room][device]['device']
-        if room in self.config['urządzenia']:
-            if device in self.config['urządzenia'][room]:
-                self.config['urządzenia'][room][device]['state'] = state
+        room, device = self.config.get_room_device(room, device)
+        self.config.add_device_state(room, device, state)
 
     def _on_message_normal(self, client, userdata, message):
         '''

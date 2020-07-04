@@ -4,15 +4,18 @@ from tkinter import ttk
 class InputFrame():
     '''
     Okno pozwalające na wprowadzenie tekstu.
+    Tekst można zatwierdzić albo anulować (exit) odpowiednim przyciskiem.
     '''
     def __init__(self, text):
 
+        # Uruchomienie okna
         self.root = tk.Tk()
         self.root.title('Pilot')
         self.root.iconbitmap('images/icon.ico')
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", exit)
 
+        # Ustawienie napisu, ramki na tekst i przycisków
         label = ttk.Label(self.root, text=f'  {text}: ')
 
         self.text_var = tk.StringVar()
@@ -30,6 +33,9 @@ class InputFrame():
         frame_buttons.grid(row=1, column=0, columnspan=2, pady=2)
 
     def start_and_return(self):
+        '''
+        Startuje okno i zwraca wpisaną i zatwierdzoną wartość.
+        '''
         self.root.mainloop()
         return self.text_var.get()
 

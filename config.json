@@ -2,7 +2,7 @@
     "adres" : "192.168.117.1",
     "nazwa" : "Mateusz",
 
-    "urządzenia" : {
+    "pokoje" : {
         "przedpokój" : {
             "lampka" : {
                 "temat" : "salon/lampka"

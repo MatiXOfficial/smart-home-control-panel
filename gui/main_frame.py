@@ -7,6 +7,7 @@ class MainFrame:
     '''
     def __init__(self, config, client):
 
+        # Ustawienia okna
         self.root = tk.Tk()
         self.root.title('Pilot')
         self.root.iconbitmap('images/icon.ico')
@@ -16,23 +17,28 @@ class MainFrame:
         # Słownik przycisków
         self.buttons = {}
         
+        # Budowa zakładek i ramki z tekstem (_info_frame)
         self.config = config
         self._info_frame()
         self.load_config()
     
+        # Ustawienie minimalnej wielkości okna na wielkość okna po zbudowaniu zakładek i ramki z tekstem
         self.root.update()
         self.root.minsize(self.root.winfo_width() + 20, self.root.winfo_height())
 
     # Rozpoczyna pętlę - wizualizacja okienka
     def start_loop(self):
         self.root.mainloop()
-
-    # Funkcja ładująca konfigurację, tworzy zakładki i przyciski.
+ 
     def load_config(self):
+        '''
+        Funkcja ładująca konfigurację, tworzy zakładki i przyciski.
+        '''
         # Tworzenie i wypełnianie zakładek
         tab_control = ttk.Notebook()
 
-        for room, lamps in self.config['urządzenia'].items():
+        for room, lamps in self.config.rooms.items():
+            # Zakładka
             tab = ttk.Frame(tab_control)
             tk.Grid.columnconfigure(tab, 0, weight=1)
             tk.Grid.columnconfigure(tab, 1, weight=1)
@@ -45,10 +51,7 @@ class MainFrame:
             # Wypisanie nazw lamp, stworzenie przycisków
             for i, lamp in enumerate(lamps.keys()):
                 label_lamp = ttk.Label(tab, text=lamp, font=('default', 15))
-                if 'state' in self.config['urządzenia'][room][lamp]:
-                    state = self.config['urządzenia'][room][lamp]['state']
-                else:
-                    state = 'Off'
+                state = self.config.get_device_state(room, lamp)
 
                 self.buttons[room][lamp] = tk.Button(tab, command=lambda x=room, y=lamp: self._button_command(x, y),
                                                      bd=1, relief=tk.GROOVE, width=6)
@@ -64,19 +67,20 @@ class MainFrame:
 
         tab_control.pack(expand=True, fill='both', side='top')
 
-    # Funkcja obsługująca przyciski
     def _button_command(self, room, device):
+        '''
+        Funkcja obsługująca przyciski
+        '''
         if self.buttons[room][device]['text'] == 'Off':
-            self.client.publish(self.config['urządzenia'][room][device]['temat'], 'On', retain=True)
+            self.client.publish(self.config.device(room, device)['temat'], 'On', retain=True)
         else:
-            self.client.publish(self.config['urządzenia'][room][device]['temat'], 'Off', retain=True)
+            self.client.publish(self.config.device(room, device)['temat'], 'Off', retain=True)
 
-    # Funkcja zmieniająca stan przycisków
     def change_button_state(self, room, device, state):
-        if room in self.config['topics'] and device in self.config['topics'][room]:
-            old_room = room
-            room = self.config['topics'][old_room][device]['room']
-            device = self.config['topics'][old_room][device]['device']
+        '''
+        Funkcja zmieniająca stan przycisków
+        '''
+        room, device = self.config.get_room_device(room, device)
 
         if state == 'Off':
             self.buttons[room][device].config(text='Off', fg='white', bg='#bcbcbc')
@@ -85,11 +89,13 @@ class MainFrame:
             self.buttons[room][device].config(text='On', fg='white', bg='#007aff')
             self.label_info['text'] = f'Włączono {room}: {device}'
 
-    # Funkcja tworzy ramkę do wyświetlania informacji.
     def _info_frame(self):
+        '''
+        Funkcja tworzy ramkę do wyświetlania informacji.
+        '''
         frame = ttk.Frame(self.root)
 
-        self.label_info = ttk.Label(frame, text=f'Połączono z {self.config["adres"]} jako {self.config["nazwa"]}.')
+        self.label_info = ttk.Label(frame, text=f'Połączono z {self.config.address} jako {self.config.name}.')
         button_options = ttk.Button(frame, text='Ustawienia')
 
         self.label_info.pack(side='left')
