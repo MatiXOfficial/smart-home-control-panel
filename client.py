@@ -21,14 +21,14 @@ class Client:
         for room, devices in self.config.rooms.items():
             for device in devices.keys():
                 if self.config.device(room, device)['typ'] == 'przełącznik':
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/button")
                 elif self.config.device(room, device)['typ'] == 'suwak':
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/slider")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/button")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/slider")
                 elif self.config.device(room, device)['typ'] == 'tv':
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/channel")
-                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/volume")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/button")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/channel")
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/volume")
 
         # Obsłużenie zatrzymanych wiadomości (retained)
         self.client.on_message = self._on_message_start
@@ -47,7 +47,7 @@ class Client:
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Służy do odebrania wiadomości zatrzymanych na serwerze w celu odtworzenia aktulanego stanu.
         '''
-        room, device, mode = message.topic.split('/')
+        _, room, device, mode = message.topic.split('/')
         state = (message.payload.decode("utf-8"))
         room, device = self.config.get_room_device(room, device)
         self.config.add_device_state(room, device, mode, state)
@@ -57,7 +57,7 @@ class Client:
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Reakcja na zmiany w trakcie działania programu.
         '''
-        room, device, mode = message.topic.split('/')
+        _, room, device, mode = message.topic.split('/')
         if mode == 'button':
             self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
         elif mode == 'slider':

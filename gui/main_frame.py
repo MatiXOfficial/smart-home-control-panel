@@ -122,9 +122,9 @@ class MainFrame:
         Funkcja obsługująca przyciski On/Off
         '''
         if self.widgets[room][device]['button']['text'] == 'Off':
-            self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'On', retain=True)
+            self.client.publish(f"{self.config.pub}/{self.config.device(room, device)['temat']}/button", 'On', retain=True)
         else:
-            self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'Off', retain=True)
+            self.client.publish(f"{self.config.pub}/{self.config.device(room, device)['temat']}/button", 'Off', retain=True)
 
     def change_button_state(self, room, device, state):
         '''
@@ -168,7 +168,7 @@ class MainFrame:
         Funkcja obsługująca suwaki
         '''
         state = self.widgets[room][device]['slider'].get()
-        self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
+        self.client.publish(f"{self.config.pub}/{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
 
     def change_slider_state(self, room, device, state):
         '''
@@ -190,7 +190,7 @@ class MainFrame:
         start_volume = self.config.get_device_state(room, device, 'volume', 0)
 
         self.widgets[room][device]['tv'] = TvFrame(tab, self.client, f'{room}/{device}', channels, 
-                                                   max_volume, start_channel, start_volume)
+                                                   max_volume, start_channel, start_volume, self.config.pub)
 
         self.widgets[room][device]['tv'].grid(row=row, column=2)
         

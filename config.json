@@ -1,5 +1,7 @@
 {
     "adres" : "192.168.117.1",
+    "publikacja" : "cmd",
+    "subskrypcja" : "cmd",
 
     "pokoje" : {
         "przedpokój" : {

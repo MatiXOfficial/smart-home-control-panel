@@ -45,6 +45,20 @@ class Config:
     def device(self, room, device):
         return self.data['pokoje'][room][device]
 
+    @property
+    def pub(self):
+        '''
+        Przedrostek dodawany do tematu przy każdym użyciu publish
+        '''
+        return self.data['publikacja']
+
+    @property
+    def sub(self):
+        '''
+        Przedsrostek dodawany do tematu przy każym użyciu subscribe
+        '''
+        return self.data['subskrypcja']
+
     def get_room_device(self, room, device):
         '''
         Zwraca nazwę pokoju i urządzenia potrzebne do tematu wykorzystując ew. wpis z topics.
@@ -82,6 +96,12 @@ class Config:
 
         if 'adres' not in self.data:
             self.data['adres'] = InputFrame('Podaj adres serwera').start_and_return()
+
+        if 'publikacja' not in self.data:
+            self.data['publikacja'] = 'cmd'
+
+        if 'subskrypcja' not in self.data:
+            self.data['subskrypcja'] = 'var'
 
         # Utworzenie słownika, w którym będą tematy urządzeń
         self.data['topics'] = {}

@@ -5,7 +5,7 @@ from gui.number_frame import NumberFrame
 
 class TvFrame:
 
-    def __init__(self, tab, client, topic, channels, max_volume, start_channel, start_volume):
+    def __init__(self, tab, client, topic, channels, max_volume, start_channel, start_volume, pub):
 
         self.root = ttk.Frame(tab)
 
@@ -13,6 +13,7 @@ class TvFrame:
         self.topic = topic
         self.channels = channels
         self.max_volume = max_volume
+        self.pub = pub
 
         # Kanał
         self.channel = int(start_channel)
@@ -55,31 +56,31 @@ class TvFrame:
 
     def _button_channel_up(self):
         if self.channel < self.channels:
-            self.client.publish(f"{self.topic}/channel", self.channel + 1, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/channel", self.channel + 1, retain=True)
 
     def _button_channel_down(self):
         if self.channel > 1:
-            self.client.publish(f"{self.topic}/channel", self.channel - 1, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/channel", self.channel - 1, retain=True)
 
     def _button_volume_up(self):
         if self.volume < self.max_volume:
-            self.client.publish(f"{self.topic}/volume", self.volume + 1, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/volume", self.volume + 1, retain=True)
 
     def _button_volume_down(self):
         if self.volume > 0:
-            self.client.publish(f"{self.topic}/volume", self.volume - 1, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/volume", self.volume - 1, retain=True)
 
     def _button_channel_value(self):
         channel = NumberFrame(1, self.channels + 1).start_and_return()
         if channel is not None:
             self.channel = channel
-            self.client.publish(f"{self.topic}/channel", self.channel, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/channel", self.channel, retain=True)
     
     def _button_volume_value(self):
         volume = NumberFrame(0, self.max_volume).start_and_return()
         if volume is not None:
             self.volume = volume
-            self.client.publish(f"{self.topic}/volume", self.volume, retain=True)
+            self.client.publish(f"{self.pub}/{self.topic}/volume", self.volume, retain=True)
 
     def change_channel(self, channel):
         self.channel = channel
