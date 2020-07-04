@@ -16,7 +16,7 @@ class MainFrame:
         # Ustawienia okna
         self.root = tk.Tk()
         self.root.title('Pilot')
-        self.root.iconbitmap('images/icon.ico')
+        self.root.iconbitmap('icon.ico')
 
         center_window(self.root)
 

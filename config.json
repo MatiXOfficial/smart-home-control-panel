@@ -1,5 +1,5 @@
 {
-    "adres" : "192.168.117.1",
+    "adres" : "test.mosquitto.org",
     "publikacja" : "cmd",
     "subskrypcja" : "cmd",
 

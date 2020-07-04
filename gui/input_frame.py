@@ -14,7 +14,7 @@ class InputFrame():
         # Uruchomienie okna
         self.root = tk.Tk()
         self.root.title('Pilot')
-        self.root.iconbitmap('images/icon.ico')
+        self.root.iconbitmap('icon.ico')
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", exit)
 

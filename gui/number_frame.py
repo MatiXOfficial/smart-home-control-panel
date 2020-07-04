@@ -14,7 +14,7 @@ class NumberFrame:
         self.root = tk.Tk()
         self.root.attributes("-topmost", True)
         self.root.title('')
-        self.root.iconbitmap('images/icon.ico')
+        self.root.iconbitmap('icon.ico')
         self.root.resizable(False, False)
 
         center_window(self.root)
