@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import math
+from time import sleep
 
 class MainFrame:
     '''
@@ -108,9 +109,6 @@ class MainFrame:
         '''
         if self.widgets[room][device]['button']['text'] == 'Off':
             self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'On', retain=True)
-            if self.config.device(room, device)['typ'] == 'suwak':
-                state = self.widgets[room][device]['slider'].get()
-                self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
         else:
             self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'Off', retain=True)
 
@@ -125,7 +123,11 @@ class MainFrame:
             self.label_info['text'] = f'Wyłączono {room}: {device}'
         else:
             self.widgets[room][device]['button'].config(text='On', fg='white', bg='#007aff')
-            self.label_info['text'] = f'Włączono {room}: {device}'
+            if self.config.device(room, device)['typ'] == 'przełącznik':
+                self.label_info['text'] = f'Włączono {room}: {device}'
+            else: #if self.config.device(room, device)['typ'] == 'suwak':
+                state = self.widgets[room][device]['slider'].get()
+                self.label_info['text'] = f'Włączono {room}: {device} i ustawiono na {state}.'
 
     # Funkcje obsługujące suwaki
     def _add_slider(self, tab, room, device, row, col):
@@ -147,9 +149,8 @@ class MainFrame:
         '''
         Funkcja obsługująca suwaki
         '''
-        if self.widgets[room][device]['button']['text'] == 'On':
-            state = self.widgets[room][device]['slider'].get()
-            self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
+        state = self.widgets[room][device]['slider'].get()
+        self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
 
     def change_slider_state(self, room, device, state):
         '''
@@ -157,4 +158,5 @@ class MainFrame:
         '''
         room, device = self.config.get_room_device(room, device)
         self.widgets[room][device]['slider'].set(int(state))
-        self.label_info['text'] = f'Ustawiono {room}: {device} na {state}'
+        if self.widgets[room][device]['button']['text'] == 'On':
+            self.label_info['text'] = f'Ustawiono {room}: {device} na {state}'
