@@ -20,7 +20,11 @@ class Client:
         # Subskrybcja określonych tematów
         for room, devices in self.config.rooms.items():
             for device in devices.keys():
-                self.client.subscribe(self.config.device(room, device)['temat'])
+                if self.config.device(room, device)['typ'] == 'przełącznik':
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
+                elif self.config.device(room, device)['typ'] == 'suwak':
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/slider")
 
         # Obsłużenie zatrzymanych wiadomości (retained)
         self.client.on_message = self._on_message_start
@@ -39,15 +43,18 @@ class Client:
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Służy do odebrania wiadomości zatrzymanych na serwerze w celu odtworzenia aktulanego stanu.
         '''
-        room, device = message.topic.split('/')
+        room, device, mode = message.topic.split('/')
         state = (message.payload.decode("utf-8"))
         room, device = self.config.get_room_device(room, device)
-        self.config.add_device_state(room, device, state)
+        self.config.add_device_state(room, device, mode, state)
 
     def _on_message_normal(self, client, userdata, message):
         '''
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Reakcja na zmiany w trakcie działania programu.
         '''
-        room, device = message.topic.split('/')
-        self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
+        room, device, mode = message.topic.split('/')
+        if mode == 'button':
+            self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
+        elif mode == 'slider':
+            self.main_frame.change_slider_state(room, device, str(message.payload.decode("utf-8")))

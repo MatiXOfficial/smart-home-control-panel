@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import math
 
 class MainFrame:
     '''
@@ -14,8 +15,8 @@ class MainFrame:
 
         self.client = client
 
-        # Słownik przycisków
-        self.buttons = {}
+        # Słownik przycisków, suwaków itd.
+        self.widgets = {}
         
         # Budowa zakładek i ramki z tekstem (_info_frame)
         self.config = config
@@ -37,57 +38,39 @@ class MainFrame:
         # Tworzenie i wypełnianie zakładek
         tab_control = ttk.Notebook()
 
-        for room, lamps in self.config.rooms.items():
+        for room, devices in self.config.rooms.items():
             # Zakładka
             tab = ttk.Frame(tab_control)
             tk.Grid.columnconfigure(tab, 0, weight=1)
             tk.Grid.columnconfigure(tab, 1, weight=1)
-            self.buttons[room] = {}
+            self.widgets[room] = {}
 
             # Wypisanie nazwy pokoju
             label_title = ttk.Label(tab, text=room, font=('default', 20))
-            label_title.grid(row=0, column=0, columnspan=2, padx=30, pady=10)
+            label_title.grid(row=0, column=0, columnspan=4, padx=30, pady=10)
 
-            # Wypisanie nazw lamp, stworzenie przycisków
-            for i, lamp in enumerate(lamps.keys()):
-                label_lamp = ttk.Label(tab, text=lamp, font=('default', 15))
-                state = self.config.get_device_state(room, lamp)
+            # Wypisanie nazw urządzeń, stworzenie przycisków, suwaków itp.
+            for i, device in enumerate(devices.keys()):
+                label_device = ttk.Label(tab, text=device, font=('default', 15))
+                label_device.grid(row=i+1, column=0, padx=10, pady=5, sticky='e')
 
-                self.buttons[room][lamp] = tk.Button(tab, command=lambda x=room, y=lamp: self._button_command(x, y),
-                                                     bd=1, relief=tk.GROOVE, width=6)
-                if state == 'Off':
-                    self.buttons[room][lamp].config(text='Off', fg='white', bg='#bcbcbc')
-                else:
-                    self.buttons[room][lamp].config(text='On', fg='white', bg='#007aff')
+                curr_col = 1
+                if device not in self.widgets[room]:
+                    self.widgets[room][device] = {}
 
-                label_lamp.grid(row=i+1, column=0, padx=10, pady=5, sticky='e')
-                self.buttons[room][lamp].grid(row=i+1, column=1, padx=2, sticky='w')
+                # Przycisk On/Off
+                if self.config.device(room, device)['typ'] in ('przełącznik', 'suwak'):
+                    self._add_button(tab, room, device, i + 1, curr_col)
+                    curr_col += 1
+
+                # Suwak
+                if self.config.device(room, device)['typ'] in ('suwak'):
+                    self._add_slider(tab, room, device, i + 1, curr_col)
+                    curr_col += 1
 
             tab_control.add(tab, text=room)
 
         tab_control.pack(expand=True, fill='both', side='top')
-
-    def _button_command(self, room, device):
-        '''
-        Funkcja obsługująca przyciski
-        '''
-        if self.buttons[room][device]['text'] == 'Off':
-            self.client.publish(self.config.device(room, device)['temat'], 'On', retain=True)
-        else:
-            self.client.publish(self.config.device(room, device)['temat'], 'Off', retain=True)
-
-    def change_button_state(self, room, device, state):
-        '''
-        Funkcja zmieniająca stan przycisków
-        '''
-        room, device = self.config.get_room_device(room, device)
-
-        if state == 'Off':
-            self.buttons[room][device].config(text='Off', fg='white', bg='#bcbcbc')
-            self.label_info['text'] = f'Wyłączono {room}: {device}'
-        else:
-            self.buttons[room][device].config(text='On', fg='white', bg='#007aff')
-            self.label_info['text'] = f'Włączono {room}: {device}'
 
     def _info_frame(self):
         '''
@@ -102,3 +85,75 @@ class MainFrame:
         button_options.pack(side='right')
 
         frame.pack(fill='both', side='bottom')
+
+    # Funkcje obsługujące przyciski On/Off
+    def _add_button(self, tab, room, device, row, col):
+        '''
+        Rysuje przycisk w zakładce.
+        '''
+        state = self.config.get_device_state(room, device, 'button', 'Off')
+        self.widgets[room][device]['button'] = tk.Button(tab, command=lambda x=room, y=device : self._button_command(x, y),
+                                            bd=1, relief=tk.GROOVE, width=6)
+        if state == 'Off':
+            self.widgets[room][device]['button'].config(text='Off', fg='white', bg='#bcbcbc')
+        else:
+            self.widgets[room][device]['button'].config(text='On', fg='white', bg='#007aff')
+
+        self.widgets[room][device]['button'].grid(row=row, column=col, padx=2, sticky='w')
+
+
+    def _button_command(self, room, device):
+        '''
+        Funkcja obsługująca przyciski On/Off
+        '''
+        if self.widgets[room][device]['button']['text'] == 'Off':
+            self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'On', retain=True)
+            if self.config.device(room, device)['typ'] == 'suwak':
+                state = self.widgets[room][device]['slider'].get()
+                self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
+        else:
+            self.client.publish(f"{self.config.device(room, device)['temat']}/button", 'Off', retain=True)
+
+    def change_button_state(self, room, device, state):
+        '''
+        Funkcja zmieniająca stan przycisków On/Off (na podstawie komunikatu z serwera)
+        '''
+        room, device = self.config.get_room_device(room, device)
+
+        if state == 'Off':
+            self.widgets[room][device]['button'].config(text='Off', fg='white', bg='#bcbcbc')
+            self.label_info['text'] = f'Wyłączono {room}: {device}'
+        else:
+            self.widgets[room][device]['button'].config(text='On', fg='white', bg='#007aff')
+            self.label_info['text'] = f'Włączono {room}: {device}'
+
+    # Funkcje obsługujące suwaki
+    def _add_slider(self, tab, room, device, row, col):
+        '''
+        Rysuje suwak w zakładce.
+        '''
+        min_val = self.config.device(room, device)['min']
+        max_val = self.config.device(room, device)['max']
+        state = self.config.get_device_state(room, device, 'slider', min_val)
+
+        self.widgets[room][device]['slider'] = tk.Scale(tab, from_=min_val, to=max_val, orient=tk.HORIZONTAL,
+                                                        tickinterval=math.ceil((max_val - min_val) / 6 * math.log10(max_val)), 
+                                                        command=lambda x, y=room, z=device : self._slider_command(x, y, z))
+        self.widgets[room][device]['slider'].set(state)
+
+        self.widgets[room][device]['slider'].grid(row=row, column=col, padx=5)
+
+    def _slider_command(self, state, room, device):
+        '''
+        Funkcja obsługująca suwaki
+        '''
+        if self.widgets[room][device]['button']['text'] == 'On':
+            self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
+
+    def change_slider_state(self, room, device, state):
+        '''
+        Funkcja zmieniająca stan suwaka (na podstawie komunikatu z serwera)
+        '''
+        room, device = self.config.get_room_device(room, device)
+        self.widgets[room][device]['slider'].set(int(state))
+        self.label_info['text'] = f'Ustawiono {room}: {device} na {state}'

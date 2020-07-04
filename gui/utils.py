@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 
 def show_error(error_message):
     '''
@@ -6,5 +7,5 @@ def show_error(error_message):
     '''
     root = tk.Tk()
     root.withdraw()
-    tk.messagebox.showerror('Błąd', error_message)
+    messagebox.showerror('Błąd', error_message)
     exit()

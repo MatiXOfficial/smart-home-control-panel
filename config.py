@@ -55,22 +55,22 @@ class Config:
             device = self.data['topics'][old_room][device]['device']
         return room, device
 
-    def add_device_state(self, room, device, state):
+    def add_device_state(self, room, device, mode, state):
         '''
         Dodaje stan początkowy do konfiguracji, jeśli dane urządzenie zostało podane w pliku config.json.
         '''
         if room in self.data['pokoje']:
             if device in self.data['pokoje'][room]:
-                self.data['pokoje'][room][device]['state'] = state
+                self.data['pokoje'][room][device][mode] = state
 
-    def get_device_state(self, room, device):
+    def get_device_state(self, room, device, mode, default_value):
         '''
         Pobiera stan ze słownika. Jeśli nie ma, zwraca "Off"
         '''
-        if 'state' in self.data['pokoje'][room][device]:
-            return self.data['pokoje'][room][device]['state']
+        if mode in self.data['pokoje'][room][device]:
+            return self.data['pokoje'][room][device][mode]
         else:
-            return 'Off'
+            return default_value
 
     def _test_config_correct(self):
         '''
