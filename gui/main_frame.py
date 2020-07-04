@@ -137,9 +137,9 @@ class MainFrame:
         state = self.config.get_device_state(room, device, 'slider', min_val)
 
         self.widgets[room][device]['slider'] = tk.Scale(tab, from_=min_val, to=max_val, orient=tk.HORIZONTAL,
-                                                        tickinterval=math.ceil((max_val - min_val) / 6 * math.log10(max_val)), 
-                                                        command=lambda x, y=room, z=device : self._slider_command(x, y, z))
+                                                        tickinterval=math.ceil((max_val - min_val) / 6 * math.log10(max_val)))
         self.widgets[room][device]['slider'].set(state)
+        self.widgets[room][device]['slider'].bind("<ButtonRelease-1>", lambda x, y=room, z=device : self._slider_command(x, y, z))
 
         self.widgets[room][device]['slider'].grid(row=row, column=col, padx=5)
 
@@ -148,6 +148,7 @@ class MainFrame:
         Funkcja obsługująca suwaki
         '''
         if self.widgets[room][device]['button']['text'] == 'On':
+            state = self.widgets[room][device]['slider'].get()
             self.client.publish(f"{self.config.device(room, device)['temat']}/slider", f'{state}', retain=True)
 
     def change_slider_state(self, room, device, state):
