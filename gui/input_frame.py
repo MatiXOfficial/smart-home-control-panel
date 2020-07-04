@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from gui.utils import center_window
+
 class InputFrame():
     '''
     Okno pozwalające na wprowadzenie tekstu.
@@ -14,6 +16,8 @@ class InputFrame():
         self.root.iconbitmap('images/icon.ico')
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", exit)
+
+        center_window(self.root)
 
         # Ustawienie napisu, ramki na tekst i przycisków
         label = ttk.Label(self.root, text=f'  {text}: ')

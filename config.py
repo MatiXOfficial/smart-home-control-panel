@@ -107,7 +107,7 @@ class Config:
                     self.data['topics'][topic_room][topic_device]['device'] = device
 
                 # Ustawienie domyślnego typu albo sprawdzenie poprawności typu wybranego przez użytkownika
-                if 'typ' not in options:
+                if 'typ' not in options or options['typ'] == 'przełącznik':
                     options['typ'] = 'przełącznik'
                 elif options['typ'] == 'suwak':
                     if 'min' not in options:
@@ -120,6 +120,13 @@ class Config:
                         options['max'] = int(options['max'])                  
                     if options['min'] >= options['max']:
                         raise ValueError(f'Wartość max powinna być większa od wartości min w {room}: {device}.')
+                elif options['typ'] == 'tv':
+                    if 'kanały' not in options:
+                        show_error(f'W {room}: {device} należy podać liczbę kanałów.')
+                    if "max głośność" not in options:
+                        options['max głośność'] = 100
+                else:
+                    show_error(f"Zły typ: {options['typ']}.")
 
     @staticmethod
     def dict_raise_duplicates(pairs):

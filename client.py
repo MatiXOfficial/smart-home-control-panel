@@ -25,6 +25,10 @@ class Client:
                 elif self.config.device(room, device)['typ'] == 'suwak':
                     self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
                     self.client.subscribe(f"{self.config.device(room, device)['temat']}/slider")
+                elif self.config.device(room, device)['typ'] == 'tv':
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/button")
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/channel")
+                    self.client.subscribe(f"{self.config.device(room, device)['temat']}/volume")
 
         # Obsłużenie zatrzymanych wiadomości (retained)
         self.client.on_message = self._on_message_start
@@ -58,3 +62,7 @@ class Client:
             self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
         elif mode == 'slider':
             self.main_frame.change_slider_state(room, device, str(message.payload.decode("utf-8")))
+        elif mode == 'channel':
+            self.main_frame.change_channel_state(room, device, str(message.payload.decode("utf-8")))
+        elif mode == 'volume':
+            self.main_frame.change_volume_state(room, device, str(message.payload.decode("utf-8")))

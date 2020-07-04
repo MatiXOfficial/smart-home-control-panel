@@ -11,7 +11,11 @@
             "lampa główna" : {
                 "typ" : "przełącznik"
             },
-            "lampa mała" : {}
+            "lampa mała" : {},
+            "telewizor" : {
+                "typ" : "tv",
+                "kanały" : 20
+            }
         },
         "kuchnia" : {
             "lampa duża" : {},
@@ -28,6 +32,11 @@
                 "typ" : "suwak",
                 "min" : 2,
                 "max" : 10
+            },
+            "telewizor" : {
+                "typ" : "tv",
+                "kanały" : 1000,
+                "max głośność" : 200
             }
         }
     }
