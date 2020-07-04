@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from sys import exit
 
 from gui.utils import center_window
 
