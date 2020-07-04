@@ -143,8 +143,13 @@ class Config:
                 elif options['typ'] == 'tv':
                     if 'kanały' not in options:
                         show_error(f'W {room}: {device} należy podać liczbę kanałów.')
+                    elif options['kanały'] <= 0:
+                        show_error(f'Niedodatnia liczba kanałów w {room}: {device}.')
+
                     if "max głośność" not in options:
                         options['max głośność'] = 100
+                    elif options['max głośność'] <= 0:
+                        show_error(f'Niedodatnia maksymalna głośność w {room}: {device}.')
                 else:
                     show_error(f"Zły typ: {options['typ']}.")
 
