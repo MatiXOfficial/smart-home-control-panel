@@ -14,7 +14,7 @@ Domyślnie wartości `<pokój>` i `<urządzenie>` są tożsame z ich odpowiednim
 
 # Instalacja
 ## Gotowe wydanie
-Najprostszym sposobem na uruchomienie aplkacji jest pobranie najnowszego wydania [*v1.0 Full Version*](https://github.com/MatiXOfficial/smart-home-control-panel/releases/tag/v1.0) (paczka *pilot.zip*). W paczce znajduje się plik wykonywalny `pilot.exe` oraz plik konfiguracyjny `config.json` (szczegóły niżej).
+Najprostszym sposobem na uruchomienie aplkacji jest pobranie najnowszego wydania (paczka *pilot.zip*). W paczce znajduje się plik wykonywalny `pilot.exe` oraz plik konfiguracyjny `config.json` (szczegóły niżej).
 
 ## Kod źródłowy
 Drugim sposobem jest pobranie i uruchomienie kodu źródłowego napisanego w Pythonie. Do uruchomienia wymagany jest zainstalowany [Python 3](https://www.python.org/downloads/). Należy także zainstalować pakiet `paho-mqtt`:
