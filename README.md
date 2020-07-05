@@ -134,4 +134,4 @@ W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie
 
 ![alt text](readme_images/salon_okno.png "Zakładka salon")
 
-![alt text](readme_images/tv_okno.png "Okno służące do wpisywania liczby")
+![alt text](readme_images/tv_opcje.png "Okno służące do wpisywania liczby")
