@@ -44,7 +44,7 @@ Urządzenia określane są przez słownik zawierający przede wszystkim klucz `"
   - `"max"` - określa maksymalną wartosć na suwaku. Musi zostać podany.
 - `tv` - urządzenie, które oprócz włącznika zawiera przełącznik kanałów i głośności. Po kliknięciu na liczbę określającą kanał albo głośność można wybrać odpowiedni parametr wpisując liczbę w nowym oknie. Dodatkowe parametry:
   - `"kanały"` - liczba kanałów. Kanały rozpoczynają się od kanału pierwszego.
-  - "`max głośność`" - maksymalna głośność. Głośność można wówczas ustawiać od `0` do `max głóśność`. Domyślnie,   tj. przy braku tego klucza - ustawiana na `100`.<br>
+  - `"max głośność"` - maksymalna głośność. Głośność można wówczas ustawiać od `0` do `max głóśność`. Domyślnie,   tj. przy braku tego klucza - ustawiana na `100`.<br>
 
 Dla każdego urządzenia może zostać podany także parametr `"temat"`. Wówczas fragment tematu `<pokój>/<urządzenie>` będzie ustawiony na to, co podał użytkownik. Ważne, by postać była taka sama (dwa słowa oddzielone ukośnikiem). Domyślnie do utworzenia tematu wykorzystane zostaną nazwy pokoju i urządzenia.
 
