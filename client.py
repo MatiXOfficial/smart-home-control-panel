@@ -17,7 +17,7 @@ class Client:
 
         self.client.loop_start()
 
-        # Subskrybcja określonych tematów
+        # Subskrypcja określonych tematów
         for room, devices in self.config.rooms.items():
             for device in devices.keys():
                 if self.config.device(room, device)['typ'] == 'przełącznik':

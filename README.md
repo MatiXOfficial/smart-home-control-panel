@@ -1,5 +1,6 @@
 # Smart Home Control Panel
-Aplikacja pilota do sterowania urządzeniami inteligentnego domu stworzona w ramach kursu Programowanie w Języku Python 2019/20 na AGH.<br>
+Aplikacja pilota do sterowania urządzeniami inteligentnego domu stworzona w ramach kursu Programowanie w Języku Python 2019/20 na AGH.
+------
 Autor: Mateusz Kocot
 -----------------------------------------------
 
@@ -110,7 +111,7 @@ Przykładowy wygląd pliku `config.json`:
 ```
 
 ## Opis przykładu
-W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie nazwy użytkownika przy uruchomieniu. Adres ustawiony jest na stronę `test.mosquitto.org`. Przy lokalnym uruchomieniu serwera, należy podać lokalny adres IP. Przedrostek `publikacji` i `subskrybcji` to `cmd`. Urządzenia podzielone są na następujące pokoje:
+W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie nazwy użytkownika przy uruchomieniu. Adres ustawiony jest na stronę `test.mosquitto.org`. Przy lokalnym uruchomieniu serwera, należy podać lokalny adres IP. Przedrostek `publikacji` i `subskrypcji` to `cmd`. Urządzenia podzielone są na następujące pokoje:
 - `przedpokój` zawiera:
   - `lampka` - przełącznik (domyślnie) o fragmencie tematu zmienionym na `"salon/lampka"`. Domyślnie byłoby to `"przedpokój/lampka"`.
 - `salon` zawiera:
