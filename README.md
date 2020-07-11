@@ -5,7 +5,7 @@ Autor: Mateusz Kocot
 -----------------------------------------------
 
 # Cel i opis projektu
-Celem projektu było stworzenie aplikacji pilota z interfejsem graficznym, za pomocą której będzie można wydawać polecenia przesyłane poprzez sieć do intelegentnego domu. Konfiguracja pilota wczytywana jest z pliku o formacie `json`. Polecenia przesyłane są do serwera MQTT. Pilot dzieli urządzenia na pokoje. Serwer publikuje i subskrybuje tematy postaci: `<przedrostek>/<pokój>/<urządzenie>/<typ komunikatu>`.
+Celem projektu było stworzenie aplikacji pilota z interfejsem graficznym, za pomocą której będzie można wydawać polecenia przesyłane poprzez sieć do intelegentnego domu. Konfiguracja pilota wczytywana jest z pliku o formacie `json`. Polecenia przesyłane są do serwera MQTT. Pilot dzieli urządzenia na pokoje. Serwer publikuje i subskrybuje tematy postaci: `<przedrostek>/<pokój>/<urządzenie>/<typ komunikatu>` oraz ewentuanie `<przedrostek>/<temp>` dla zmian temperatury.
 - `<przedrostek>` - odpowiedni przedrostek dodawany jest do publikacji (domyślnie `cmd`) i subskrypcji (domyślnie `var`). Pozwala na odróżnienie wiadomości wysyłanych od odbieranych. Uwaga! Aplikacja testowana była tylko w przypadku, gdy oba przedrostki były takie same. Wówczas pilot dokonywał zmian na podstawie wiadomości wysyłanych przez siebie lub inne piloty. Docelowo powinien on reagować na wiadomości wysyłane przez urządzenia. Stąd rozróżnienie obu przedrostków. 
 - `<pokój>` - urządzenia podzielone są na pokoje.
 - `<urządzenie>` - nazwa urządzenia.
@@ -35,6 +35,11 @@ W pierwszym słowniku znajdują się następujące parametry:
 - `"nazwa"` - nazwa użytkownika serwera MQTT. Parametr ten nie musi zostać podany w pliku. Wówczas program poprosi o wpisanie adresu przy starcie.
 - `"publikacja"` - przedrostek dodawany do tematów publikowanych wiadomości. Parametr ten nie musi zostać podany w pliku. Wówczas brana pod uwagę będzie domyślna wartość `cmd`.
 - `"subskrypcja"` - przedrostek dodawany do tematów subskrybowanych wiadomości. Parametr ten nie musi zostać podany w pliku. Wówczas brana pod uwagę będzie domyślna wartość `var`.
+- `"temperatura"` - opcjonalny słownik. Po jego podaniu, w aplikacji będzie można zmieniać oczekiwaną temperaturę w °C. Słownik ten zawiera następujące klucze:
+  - `"min"` - Wartość minimalna temperatury. Przy braku tego klucza, ustawiana na 15°C.
+  - `"max"` - Wartość maksymalna temperatury. Przy braku tego klucza, ustawiana na 30°C.
+  - `"krok"` - Wartość określająca zmianę temperatury po naciśnięciu przycisku. Przy braku tego klucza, ustawiana na 0.5°C.
+  - `"start"` - Wartość początkowa temperatury. Przy braku tego klucza, ustawiana na średnią arytmetyczną wartości `"min"` i `"max"`.
 - `"pokoje"` - słownik, którego kluczami są nazwy pokoi, a wartościami są słowniki zawierające urządzenia znajdujące się w danym pokoju. Kluczmi tych słowników są nazwy urządzeń, a wartościami - atrybuty urządzenia (typ i jego wartości - szczegóły poniżej).
 
 ## Urządzenia i ich typy
@@ -70,6 +75,11 @@ Przykładowy wygląd pliku `config.json`:
     "adres" : "test.mosquitto.org",
     "publikacja" : "cmd",
     "subskrypcja" : "cmd",
+    "temperatura" : {
+        "min" : 15,
+        "max" : 25,
+        "start" : 21
+    },
 
     "pokoje" : {
         "przedpokój" : {
@@ -126,7 +136,7 @@ Przykładowy wygląd pliku `config.json`:
 ```
 
 ## Opis przykładu
-W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie nazwy użytkownika przy uruchomieniu. Adres ustawiony jest na stronę `test.mosquitto.org`. Przy lokalnym uruchomieniu serwera, należy podać lokalny adres IP. Przedrostek `publikacji` i `subskrypcji` to `cmd`. Urządzenia podzielone są na następujące pokoje:
+W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie nazwy użytkownika przy uruchomieniu. Adres ustawiony jest na stronę `test.mosquitto.org`. Przy lokalnym uruchomieniu serwera, należy podać lokalny adres IP. Przedrostek `publikacji` i `subskrypcji` to `cmd`. Aplikacja pozwoli na zmianę temperatury za sprawą klucza `"temperatura"`. Nie podano wartości `kroku`, która zostanie ustawiona domyślnie na `0.5`. Urządzenia podzielone są na następujące pokoje:
 - `przedpokój` zawiera:
   - `lampka` - przełącznik (domyślnie) o fragmencie tematu zmienionym na `"salon/lampka"`. Domyślnie byłoby to `"przedpokój/lampka"`.
   - `roleta` - typ `roleta`
