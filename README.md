@@ -40,7 +40,7 @@ W pierwszym słowniku znajdują się następujące parametry:
   - `"max"` - Wartość maksymalna temperatury. Przy braku tego klucza, ustawiana na 30°C.
   - `"krok"` - Wartość określająca zmianę temperatury po naciśnięciu przycisku. Przy braku tego klucza, ustawiana na 0.5°C.
   - `"start"` - Wartość początkowa temperatury. Przy braku tego klucza, ustawiana na średnią arytmetyczną wartości `"min"` i `"max"`.
-- `"pokoje"` - słownik, którego kluczami są nazwy pokoi, a wartościami są słowniki zawierające urządzenia znajdujące się w danym pokoju. Kluczmi tych słowników są nazwy urządzeń, a wartościami - atrybuty urządzenia (typ i jego wartości - szczegóły poniżej).
+- `"pokoje"` - słownik, którego kluczami są nazwy pokoi, a wartościami są słowniki zawierające urządzenia znajdujące się w danym pokoju. Kluczami tych słowników są nazwy urządzeń, a wartościami - atrybuty urządzenia (typ i jego wartości - szczegóły poniżej).
 
 ## Urządzenia i ich typy
 Urządzenia określane są przez słownik zawierający przede wszystkim klucz `"typ"`. Możliwe typy urządzeń to:
@@ -158,12 +158,14 @@ W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie
 
 # Przykładowy wygląd programu
 
-![alt text](readme_images/nazwa.png "Okno z wyborem nazwy")
+![alt text](readme_images/nazwa_okno.png "Okno z wyborem nazwy")
 
-![alt text](readme_images/przedpokój.png "Zakładka przedpokój")
+![alt text](readme_images/przedpokój_okno.png "Zakładka przedpokój")
 
-![alt text](readme_images/salon.png "Zakładka salon")
+![alt text](readme_images/salon_okno.png "Zakładka salon")
 
-![alt text](readme_images/tv.png "Okno służące do wpisywania liczby")
+![alt text](readme_images/tv_okno.png "Okno służące do wpisywania liczby")
 
-![alt text](readme_images/kuchnia.png "Zakładka kuchnia")
+![alt text](readme_images/kuchnia_okno.png "Zakładka kuchnia")
+
+![alt text](readme_images/kuchnia_okno_2.png "Zakładka kuchnia - włączone urządzenia")
