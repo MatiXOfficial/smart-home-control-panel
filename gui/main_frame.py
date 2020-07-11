@@ -42,6 +42,10 @@ class MainFrame:
         '''
         Funkcja ładująca konfigurację, tworzy zakładki i przyciski.
         '''
+        # Ewentualne tworzenie panelu do zmiany temperatury
+        if self.config.is_temp_set():
+            self._add_temp_panel()
+
         # Tworzenie i wypełnianie zakładek
         tab_control = ttk.Notebook()
 
@@ -107,6 +111,48 @@ class MainFrame:
         # button_options.pack(side='right')
 
         frame.pack(fill='both', side='bottom')
+
+    # Funkcje obsługujące panel temperatury
+    def _add_temp_panel(self):
+        '''
+        Rysuje panel temperatury
+        '''
+        frame = ttk.Frame(self.root)
+
+        state = self.config.get_temp_state()
+        self.temp = state
+        self.temp_label = ttk.Label(frame, text=f'Temperatura: {self.temp}°C')
+
+        button_up = ttk.Button(frame, text=f"+{self.config.temp['krok']}°C", width=8,
+                               command = lambda x='up' : self._temp_command(x))
+        button_down = ttk.Button(frame, text=f"-{self.config.temp['krok']}°C", width=8,
+                                 command = lambda x='down' : self._temp_command(x))
+
+        self.temp_label.pack(side='left', padx=4)
+        button_up.pack(side='left', padx=3)
+        button_down.pack(side='left', padx=3)
+
+        frame.pack(anchor='w', pady=3)
+
+    def _temp_command(self, mode):
+        '''
+        Funkcja obsługująca przyciski zmiany temperatury
+        '''
+        if mode == 'up':
+            new_temp = self.temp + self.config.temp['krok']
+            if new_temp > self.config.temp['max']:
+                return
+        else: # if mode == 'up'
+            new_temp = self.temp - self.config.temp['krok']
+            if new_temp < self.config.temp['min']:
+                return
+
+        self.client.publish(f"{self.config.pub}/temp", f'{new_temp}', retain=True)
+
+    def change_temp_state(self, new_temp):
+        self.temp = float(new_temp)
+        self.temp_label['text'] = f'Temperatura: {self.temp}°C'
+        self.label_info['text'] = f'Zmieniono temperaturę na {self.temp}°C.'
 
     # Funkcje obsługujące przyciski On/Off
     def _add_button(self, tab, room, device, row):

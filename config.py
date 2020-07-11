@@ -33,7 +33,11 @@ class Config:
 
     @property
     def name(self):
-        return self.data['nazwa']       
+        return self.data['nazwa']      
+
+    @property
+    def temp(self):
+        return self.data['temperatura'] 
 
     @property
     def rooms(self):
@@ -55,9 +59,18 @@ class Config:
     @property
     def sub(self):
         '''
-        Przedsrostek dodawany do tematu przy każym użyciu subscribe
+        Przedrostek dodawany do tematu przy każym użyciu subscribe
         '''
         return self.data['subskrypcja']
+
+    def is_temp_set(self):
+        '''
+        Zwraca True jeśli ustawiono kontrolę temperatury w słowniku.
+        '''
+        if self.temp is not None:
+            return True
+        else:
+            return False
 
     def get_room_device(self, room, device):
         '''
@@ -79,18 +92,31 @@ class Config:
 
     def get_device_state(self, room, device, mode, default_value):
         '''
-        Pobiera stan ze słownika. Jeśli nie ma, zwraca "Off"
+        Pobiera stan ze słownika. Jeśli nie ma, zwraca default_value
         '''
         if mode in self.data['pokoje'][room][device]:
             return self.data['pokoje'][room][device][mode]
         else:
             return default_value
 
+    def add_temp_state(self, temp):
+        '''
+        Dodaje stan początkowy do temperatury, jeżeli została ona określona w pliku config.json.
+        '''
+        if self.is_temp_set():
+            self.data['temperatura']['start'] = temp
+
+    def get_temp_state(self):
+        '''
+        Pobiera stan początkowy temperatury ze słownika.
+        '''
+        return self.data['temperatura']['start']
+
     def _test_config_correct(self):
         '''
         Sprawdza poprawność słownika config oraz standaryzuje go w celu poprawnego działania programu.
         '''
-        # Ewentualne uzupełnienie nazwy i adresu
+        # Ewentualne uzupełnienie nazwy, adresu oraz przedrostków
         if 'nazwa' not in self.data:
             self.data['nazwa'] = InputFrame('Podaj nazwę').start_and_return()
 
@@ -102,6 +128,28 @@ class Config:
 
         if 'subskrypcja' not in self.data:
             self.data['subskrypcja'] = 'var'
+
+        # Ewentualne uzupełnienie albo sprawdzenie poprawności słownika temperatury
+        if 'temperatura' not in self.data:
+            self.data['temperatura'] = None
+        else:
+            if 'min' not in self.data['temperatura']:
+                self.data['temperatura']['min'] = 15
+            if 'max' not in self.data['temperatura']:
+                self.data['temperatura']['max'] = 30
+            if 'krok' not in self.data['temperatura']:
+                self.data['temperatura']['krok'] = 0.5
+            if 'start' not in self.data['temperatura']:
+                self.data['temperatura']['start'] = (self.data['temperatura']['min'] + self.data['temperatura']['max']) / 2
+
+            if self.data['temperatura']['min'] >= self.data['temperatura']['max']:
+                show_error('Wartość max powinna być większa od wartości min w ustawieniach temperatury.')
+            if self.data['temperatura']['krok'] <= 0:
+                show_error('Wartość kroku w ustawieniach temperatury powinna być dodatnia.')
+            if self.data['temperatura']['start'] < self.data['temperatura']['min']:
+                show_error('Wartość początkowa temperatury nie może być mniejsza od wartości minimalnej.')
+            if self.data['temperatura']['start'] > self.data['temperatura']['max']:
+                show_error('Wartość początkowa temperatury nie może być większa od wartości maksymalnej.')
 
         # Utworzenie słownika, w którym będą tematy urządzeń
         self.data['topics'] = {}

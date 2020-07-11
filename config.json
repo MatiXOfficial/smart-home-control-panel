@@ -2,6 +2,11 @@
     "adres" : "test.mosquitto.org",
     "publikacja" : "cmd",
     "subskrypcja" : "cmd",
+    "temperatura" : {
+        "min" : 15,
+        "max" : 25,
+        "start" : 21
+    },
 
     "pokoje" : {
         "przedpokój" : {

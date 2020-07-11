@@ -17,7 +17,11 @@ class Client:
 
         self.client.loop_start()
 
-        # Subskrypcja określonych tematów
+        # Ewentualna subskrypcja tematu temperatury
+        if self.config.is_temp_set():
+            self.client.subscribe(f"{self.config.sub}/temp")
+
+        # Subskrypcja tematów urządzeń
         for room, devices in self.config.rooms.items():
             for device in devices.keys():
                 if self.config.device(room, device)['typ'] == 'przełącznik':
@@ -49,24 +53,39 @@ class Client:
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Służy do odebrania wiadomości zatrzymanych na serwerze w celu odtworzenia aktulanego stanu.
         '''
-        _, room, device, mode = message.topic.split('/')
-        state = (message.payload.decode("utf-8"))
-        room, device = self.config.get_room_device(room, device)
-        self.config.add_device_state(room, device, mode, state)
+        topic = message.topic.split('/')
+
+        # Temperatura
+        if len(topic) == 2:
+            state = message.payload.decode("utf-8")
+            self.config.add_temp_state(int(state))
+        # Urządzenie
+        else:
+            _, room, device, mode = topic
+            state = message.payload.decode("utf-8")
+            room, device = self.config.get_room_device(room, device)
+            self.config.add_device_state(room, device, mode, state)
 
     def _on_message_normal(self, client, userdata, message):
         '''
         Callout wykonujący się po otrzymaniu wiadomości z serwera.
         Reakcja na zmiany w trakcie działania programu.
         '''
-        _, room, device, mode = message.topic.split('/')
-        if mode == 'button':
-            self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
-        elif mode == 'slider':
-            self.main_frame.change_slider_state(room, device, str(message.payload.decode("utf-8")))
-        elif mode == 'channel':
-            self.main_frame.change_channel_state(room, device, str(message.payload.decode("utf-8")))
-        elif mode == 'volume':
-            self.main_frame.change_volume_state(room, device, str(message.payload.decode("utf-8")))
-        elif mode == 'blind':
-            self.main_frame.change_blind_state(room, device, str(message.payload.decode("utf-8")))
+        topic = message.topic.split('/')
+        
+        # Temperatura
+        if len(topic) == 2:
+            self.main_frame.change_temp_state(str(message.payload.decode("utf-8")))
+        # Urządzenie
+        else:
+            _, room, device, mode = topic
+            if mode == 'button':
+                self.main_frame.change_button_state(room, device, str(message.payload.decode("utf-8")))
+            elif mode == 'slider':
+                self.main_frame.change_slider_state(room, device, str(message.payload.decode("utf-8")))
+            elif mode == 'channel':
+                self.main_frame.change_channel_state(room, device, str(message.payload.decode("utf-8")))
+            elif mode == 'volume':
+                self.main_frame.change_volume_state(room, device, str(message.payload.decode("utf-8")))
+            elif mode == 'blind':
+                self.main_frame.change_blind_state(room, device, str(message.payload.decode("utf-8")))
