@@ -7,6 +7,9 @@
         "przedpokój" : {
             "lampka" : {
                 "temat" : "salon/lampka"
+            },
+            "roleta" : {
+                "typ" : "roleta"
             }
         },
         "salon" : {
@@ -17,6 +20,12 @@
             "telewizor" : {
                 "typ" : "tv",
                 "kanały" : 20
+            },
+            "roleta 1" : {
+                "typ" : "roleta"
+            },
+            "roleta 2" : {
+                "typ" : "roleta"
             }
         },
         "kuchnia" : {
@@ -27,7 +36,10 @@
             }
         },
         "sypialnia" : {
-            "lampka nocna" : {}   
+            "lampka nocna" : {},
+            "roleta" : {
+                "typ" : "roleta"
+            }   
         },
         "biuro" : {
             "podświetlenie led" : {

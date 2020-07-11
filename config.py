@@ -150,6 +150,8 @@ class Config:
                         options['max głośność'] = 100
                     elif options['max głośność'] <= 0:
                         show_error(f'Niedodatnia maksymalna głośność w {room}: {device}.')
+                elif options['typ'] == 'roleta':
+                    pass
                 else:
                     show_error(f"Zły typ: {options['typ']}.")
 

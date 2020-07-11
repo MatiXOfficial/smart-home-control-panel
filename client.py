@@ -29,6 +29,8 @@ class Client:
                     self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/button")
                     self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/channel")
                     self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/volume")
+                elif self.config.device(room, device)['typ'] == 'roleta':
+                    self.client.subscribe(f"{self.config.sub}/{self.config.device(room, device)['temat']}/blind")
 
         # Obsłużenie zatrzymanych wiadomości (retained)
         self.client.on_message = self._on_message_start
@@ -66,3 +68,5 @@ class Client:
             self.main_frame.change_channel_state(room, device, str(message.payload.decode("utf-8")))
         elif mode == 'volume':
             self.main_frame.change_volume_state(room, device, str(message.payload.decode("utf-8")))
+        elif mode == 'blind':
+            self.main_frame.change_blind_state(room, device, str(message.payload.decode("utf-8")))

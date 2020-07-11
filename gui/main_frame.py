@@ -65,17 +65,24 @@ class MainFrame:
                     self.widgets[room][device] = {}
 
                 # Przycisk On/Off
-                if self.config.device(room, device)['typ'] in ('przełącznik', 'suwak', 'tv'):
+                if self.config.device(room, device)['typ'] == 'przełącznik':
                     self._add_button(tab, room, device, i + 1)
 
                 # Suwak
-                if self.config.device(room, device)['typ'] == 'suwak':
+                elif self.config.device(room, device)['typ'] == 'suwak':
+                    self._add_button(tab, room, device, i + 1)
                     self._add_slider(tab, room, device, i + 1)
                     was_not_button = True
 
                 # Tv
-                if self.config.device(room, device)['typ'] == 'tv':
+                elif self.config.device(room, device)['typ'] == 'tv':
+                    self._add_button(tab, room, device, i + 1)
                     self._add_tv(tab, room, device, i + 1)
+                    was_not_button = True
+
+                # Roleta
+                elif self.config.device(room, device)['typ'] == 'roleta':
+                    self._add_blind_menu(tab, room, device, i + 1)
                     was_not_button = True
 
             if was_not_button:
@@ -203,3 +210,40 @@ class MainFrame:
         self.widgets[room][device]['tv'].change_volume(int(state))
         if self.widgets[room][device]['button']['text'] == 'On':
             self.label_info['text'] = f'Ustawiono głośność w {room}: {device} na {state}.'
+
+    # Funkcje obsługujące rolety
+    def _add_blind_menu(self, tab, room, device, row):
+        '''
+        Rysuje przyciski odpowiedzialne opuszczanie i podnoszenie rolet.
+        '''
+        frame = ttk.Frame(tab)
+
+        self.widgets[room][device]['blind_up'] = ttk.Button(frame, text='\u25B2', width=4, 
+                                        command=lambda x=room, y=device, z='up' : self._blind_command(x, y, z))
+        self.widgets[room][device]['blind_down'] = ttk.Button(frame, text='\u25BC', width=4, 
+                                        command=lambda x=room, y=device, z='down' : self._blind_command(x, y, z))
+
+        self.widgets[room][device]['blind_up'].pack()
+        self.widgets[room][device]['blind_down'].pack()
+
+        frame.grid(row=row, column=1, padx=2, pady=2, sticky='we')
+
+    def _blind_command(self, room, device, mode):
+        '''
+        Funkcja obsługująca przyciski podnoszące i opuszczające rolety
+        '''
+        self.client.publish(f"{self.config.pub}/{self.config.device(room, device)['temat']}/blind", mode, retain=False)
+        
+        if mode == 'up':
+            self.label_info['text'] = f'Podnoszę {room}: {device}.'
+        else:
+            self.label_info['text'] = f'Opuszczam {room}: {device}.'
+
+    def change_blind_state(self, room, device, state):
+        '''
+        Funkcja wyświetla komunikat o podniesieniu/opuszczeniu rolet (na podstawie komunikatu z serwera)
+        '''
+        if state == 'up':
+            self.label_info['text'] = f'Podniesiono {room}: {device}.'
+        else: # if state == 'down'
+            self.label_info['text'] = f'Opuszczono {room}: {device}.'
