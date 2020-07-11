@@ -148,12 +148,12 @@ W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie
 
 # Przykładowy wygląd programu
 
-![alt text](readme_images/nazwa_okno.png "Okno z wyborem nazwy")
+![alt text](readme_images/nazwa.png "Okno z wyborem nazwy")
 
-![alt text](readme_images/przedpokój_okno.png "Zakładka przedpokój")
+![alt text](readme_images/przedpokój.png "Zakładka przedpokój")
 
-![alt text](readme_images/salon_okno.png "Zakładka salon")
+![alt text](readme_images/salon.png "Zakładka salon")
 
-![alt text](readme_images/tv_opcje.png "Okno służące do wpisywania liczby")
+![alt text](readme_images/tv.png "Okno służące do wpisywania liczby")
 
-![alt text](readme_images/kuchnia_okno.png "Zakładka kuchnia")
+![alt text](readme_images/kuchnia.png "Zakładka kuchnia")
