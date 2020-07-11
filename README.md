@@ -15,7 +15,7 @@ Domyślnie wartości `<pokój>` i `<urządzenie>` są tożsame z ich odpowiednim
 
 # Instalacja
 ## Gotowe wydanie
-Najprostszym sposobem na uruchomienie aplkacji jest pobranie najnowszego wydania (paczka *pilot.zip*). W paczce znajduje się plik wykonywalny `pilot.exe` oraz plik konfiguracyjny `config.json` (szczegóły niżej).
+W systemach Windows najprostszym sposobem na uruchomienie aplikacji jest pobranie najnowszego wydania (paczka *pilot.zip*). W paczce znajduje się plik wykonywalny `pilot.exe` oraz plik konfiguracyjny `config.json` (szczegóły niżej).
 
 ## Kod źródłowy
 Drugim sposobem jest pobranie i uruchomienie kodu źródłowego napisanego w Pythonie. Do uruchomienia wymagany jest zainstalowany [Python 3](https://www.python.org/downloads/). Należy także zainstalować pakiet `paho-mqtt`:
@@ -46,6 +46,7 @@ Urządzenia określane są przez słownik zawierający przede wszystkim klucz `"
 - `tv` - urządzenie, które oprócz włącznika zawiera przełącznik kanałów i głośności. Po kliknięciu na liczbę określającą kanał albo głośność można wybrać odpowiedni parametr wpisując liczbę w nowym oknie. Dodatkowe parametry:
   - `"kanały"` - liczba kanałów. Kanały rozpoczynają się od kanału pierwszego.
   - `"max głośność"` - maksymalna głośność. Głośność można wówczas ustawiać od `0` do `max głóśność`. Domyślnie,   tj. przy braku tego klucza - ustawiana na `100`.<br>
+- `roleta` - zapewnia możliwość podnoszenia i opuszczania.
 
 Dla każdego urządzenia może zostać podany także parametr `"temat"`. Wówczas fragment tematu `<pokój>/<urządzenie>` będzie ustawiony na to, co podał użytkownik. Ważne, by postać była taka sama (dwa słowa oddzielone ukośnikiem). Domyślnie do utworzenia tematu wykorzystane zostaną nazwy pokoju i urządzenia.
 
@@ -59,6 +60,8 @@ Typy komunikatów dla każdego urządzenia wyglądają następująco:
   - `toggle` - odpowiedzialny za włączanie i wyłączanie.
   - `channel` - odpowiedzialny za zmianę kanału.
   - `volume` - odpowiedzialny za zmianę głóśności.
+- `roleta`
+  - `blind` - odpowiedzialny za podnoszenie i opuszczanie rolety.
 
 ## Przykład
 Przykładowy wygląd pliku `config.json`:
@@ -72,6 +75,9 @@ Przykładowy wygląd pliku `config.json`:
         "przedpokój" : {
             "lampka" : {
                 "temat" : "salon/lampka"
+            },
+            "roleta" : {
+                "typ" : "roleta"
             }
         },
         "salon" : {
@@ -82,6 +88,12 @@ Przykładowy wygląd pliku `config.json`:
             "telewizor" : {
                 "typ" : "tv",
                 "kanały" : 20
+            },
+            "roleta 1" : {
+                "typ" : "roleta"
+            },
+            "roleta 2" : {
+                "typ" : "roleta"
             }
         },
         "kuchnia" : {
@@ -92,7 +104,10 @@ Przykładowy wygląd pliku `config.json`:
             }
         },
         "sypialnia" : {
-            "lampka nocna" : {}   
+            "lampka nocna" : {},
+            "roleta" : {
+                "typ" : "roleta"
+            }   
         },
         "biuro" : {
             "podświetlenie led" : {
@@ -114,15 +129,19 @@ Przykładowy wygląd pliku `config.json`:
 W powyższym przykładzie nie została podana `nazwa`. Program poprosi o podanie nazwy użytkownika przy uruchomieniu. Adres ustawiony jest na stronę `test.mosquitto.org`. Przy lokalnym uruchomieniu serwera, należy podać lokalny adres IP. Przedrostek `publikacji` i `subskrypcji` to `cmd`. Urządzenia podzielone są na następujące pokoje:
 - `przedpokój` zawiera:
   - `lampka` - przełącznik (domyślnie) o fragmencie tematu zmienionym na `"salon/lampka"`. Domyślnie byłoby to `"przedpokój/lampka"`.
+  - `roleta` - typ `roleta`
 - `salon` zawiera:
   - `lampa główna` - przełącznik
   - `lampa mała` - przełącznik
   - `telewizor` - typ `tv` o liczbie kanałów: 20 oraz domyślnej maksymalnej głośności: 100.
+  - `roleta 1` - typ `roleta`
+  - `roleta 2` - typ `roleta`
 - `kuchnia` zawiera:
   - `lampa duża` - przełącznik
   - `oświetlenie kuchni` - typ `suwak` o minimalnej wartości ustawionej domyślnie na 1 oraz maksymalnej wartości: 6.
 - `sypialnia` zawiera:
   - `lampka nocna` - przełącznik
+  - `roleta` - typ `roleta`
 - `biuro` zawiera:
   - `podświetlenie led` - typ `suwak` o minimalnej wartości ustawionej na 2 oraz maksymalnej wartości: 10.
   - `telewizor` - typ `tv` o liczbie kanałów: 1000 oraz domyślnej maksymalnej głośności: 200.
