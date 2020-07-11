@@ -22,6 +22,10 @@ Drugim sposobem jest pobranie i uruchomienie kodu źródłowego napisanego w Pyt
 ```
 pip install paho-mqtt
 ```
+By włączyć aplikację, należy uruchomić plik `main.py` za pomocą interpretera Pythona:
+```
+python main.py
+```
 
 # Serwer MQTT
 Aplikacja komunikuje się z serwerem MQTT, więc trzeba przygotować np. [Eclipse Mosquitto](https://mosquitto.org/download/). Do testów można wykorzystać serwer dostępny online, np: test.mosquitto.org.
