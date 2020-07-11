@@ -46,7 +46,7 @@ Urządzenia określane są przez słownik zawierający przede wszystkim klucz `"
 - `tv` - urządzenie, które oprócz włącznika zawiera przełącznik kanałów i głośności. Po kliknięciu na liczbę określającą kanał albo głośność można wybrać odpowiedni parametr wpisując liczbę w nowym oknie. Dodatkowe parametry:
   - `"kanały"` - liczba kanałów. Kanały rozpoczynają się od kanału pierwszego.
   - `"max głośność"` - maksymalna głośność. Głośność można wówczas ustawiać od `0` do `max głóśność`. Domyślnie,   tj. przy braku tego klucza - ustawiana na `100`.<br>
-- `roleta` - zapewnia możliwość podnoszenia i opuszczania.
+- `roleta` - zapewnia możliwość podnoszenia i opuszczania. Przy podnoszeniu oraz po podniesieniu, a także przy opuszczaniu oraz po opuszczeniu wyświetlają się odpowiednie komunikaty. Jeśli przedrostki publikacji i subskrypcji są takie same, oba komunikaty wyświetlą się niemal jednocześnie.
 
 Dla każdego urządzenia może zostać podany także parametr `"temat"`. Wówczas fragment tematu `<pokój>/<urządzenie>` będzie ustawiony na to, co podał użytkownik. Ważne, by postać była taka sama (dwa słowa oddzielone ukośnikiem). Domyślnie do utworzenia tematu wykorzystane zostaną nazwy pokoju i urządzenia.
 
